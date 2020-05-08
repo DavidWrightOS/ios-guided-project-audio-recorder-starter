@@ -98,16 +98,19 @@ class AudioRecorderController: UIViewController {
         }
     }
     
-    /*
     func prepareAudioSession() throws {
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.playAndRecord, options: [.defaultToSpeaker])
         try session.setActive(true, options: []) // can fail if on a phone call, for instance
     }
-    */
     
     func play() {
-        audioPlayer?.play()
+        do {
+            try prepareAudioSession()
+            audioPlayer?.play()
+        } catch {
+            print("Cannot play audio: \(error)") // should really display an alert to the user here
+        }
     }
     
     func pause() {
