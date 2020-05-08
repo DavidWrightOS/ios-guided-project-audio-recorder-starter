@@ -47,7 +47,7 @@ class AudioRecorderController: UIViewController {
         
         // Use a font that won't jump around as values change
         timeElapsedLabel.font = UIFont.monospacedDigitSystemFont(ofSize: timeElapsedLabel.font.pointSize,
-                                                          weight: .regular)
+                                                                 weight: .regular)
         timeRemainingLabel.font = UIFont.monospacedDigitSystemFont(ofSize: timeRemainingLabel.font.pointSize,
                                                                    weight: .regular)
         
@@ -59,8 +59,13 @@ class AudioRecorderController: UIViewController {
         playButton.isSelected = isPlaying
         
         let elapsedTime = audioPlayer?.currentTime ?? 0
+        let duration = audioPlayer?.duration ?? 0
         
         timeElapsedLabel.text = timeIntervalFormatter.string(from: elapsedTime)
+        
+        timeSlider.minimumValue = 0
+        timeSlider.maximumValue = Float(duration)
+        timeSlider.value = Float(elapsedTime)
     }
     
     deinit {
@@ -72,7 +77,7 @@ class AudioRecorderController: UIViewController {
     func startTimer() {
         timer?.invalidate()
         
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] (_) in
+        timer = Timer.scheduledTimer(withTimeInterval: 0.030, repeats: true) { [weak self] (_) in
             guard let self = self else { return }
             
             self.updateViews()
@@ -218,6 +223,7 @@ extension AudioRecorderController: AVAudioPlayerDelegate {
     
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         updateViews()
+        cancelTimer()
     }
     
     func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
